@@ -1,12 +1,10 @@
 import random
 
 import cv2
-import os
-import glob
+from pathlib import Path
 import numpy as np
-from PIL import Image
 
-def mosaic(all_img_list, all_annos, idxs, output_size, scale_range, filter_scale=0.):
+def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filter_scale=0.):
     output_img = np.zeros([output_size[0], output_size[1], 3], dtype=np.uint8)
     scale_x = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
     scale_y = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
@@ -16,7 +14,11 @@ def mosaic(all_img_list, all_annos, idxs, output_size, scale_range, filter_scale
     new_anno = []
     for i, idx in enumerate(idxs):
         path = all_img_list[idx]
-        img_annos = all_annos[idx]
+        file_name = annotation_folder / Path(path.split('/')[-1].replace('.png','.txt'))
+        img_annos = []
+        if file_name.exists():
+            for line in file_name.read_text().split('\n'):
+                img_annos.append([float(item) for item in line.split(' ')])
 
         img = cv2.imread(path)
         if i == 0:  # top-left

@@ -162,4 +162,4 @@ cython_debug/
 #### my gitignore
 *.jpg
 *.png 
-*.txt
+output.txt

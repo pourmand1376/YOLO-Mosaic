@@ -1,15 +1,15 @@
 import random
-
 import cv2
 import os
 import glob
-import numpy as np
 
 def file_len(fname):
     with open(fname) as f:
         for i, l in enumerate(f):
             pass
     return i + 1
+
+
 
 def dataset(anno_dir, img_dir):
     img_paths = []
