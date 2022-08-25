@@ -1,10 +1,12 @@
 import random
-
 import cv2
 from pathlib import Path
 import numpy as np
 
-def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filter_scale=0.):
+
+def mosaic(
+    all_img_list, annotation_folder, idxs, output_size, scale_range, filter_scale=0.0
+):
     output_img = np.zeros([output_size[0], output_size[1], 3], dtype=np.uint8)
     scale_x = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
     scale_y = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
@@ -14,23 +16,25 @@ def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filt
     new_anno = []
     for i, idx in enumerate(idxs):
         path = all_img_list[idx]
-        file_name = annotation_folder / Path(path.split('/')[-1].replace('.png','.txt'))
+        file_name = annotation_folder / Path(
+            path.split("/")[-1].replace(".png", ".txt")
+        )
         img_annos = []
         if file_name.exists():
-            for line in file_name.read_text().split('\n'):
-                img_annos.append([float(item) for item in line.split(' ')])
+            for line in file_name.read_text().split("\n"):
+                img_annos.append([float(item) for item in line.split(" ")])
 
         img = cv2.imread(path)
         if i == 0:  # top-left
             img = cv2.resize(img, (divid_point_x, divid_point_y))
             output_img[:divid_point_y, :divid_point_x, :] = img
             for bbox in img_annos:
-                
+
                 # As YOLO annotations have different centers from the image, this is how the bbox coordinates are calculated
-                xmin = bbox[1] - bbox[3]*0.5
-                ymin = bbox[2] - bbox[4]*0.5
-                xmax = bbox[1] + bbox[3]*0.5
-                ymax = bbox[2] + bbox[4]*0.5
+                xmin = bbox[1] - bbox[3] * 0.5
+                ymin = bbox[2] - bbox[4] * 0.5
+                xmax = bbox[1] + bbox[3] * 0.5
+                ymax = bbox[2] + bbox[4] * 0.5
 
                 xmin *= scale_x
                 ymin *= scale_y
@@ -40,12 +44,12 @@ def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filt
 
         elif i == 1:  # top-right
             img = cv2.resize(img, (output_size[1] - divid_point_x, divid_point_y))
-            output_img[:divid_point_y, divid_point_x:output_size[1], :] = img
+            output_img[:divid_point_y, divid_point_x : output_size[1], :] = img
             for bbox in img_annos:
-                xmin = bbox[1] - bbox[3]*0.5
-                ymin = bbox[2] - bbox[4]*0.5
-                xmax = bbox[1] + bbox[3]*0.5
-                ymax = bbox[2] + bbox[4]*0.5
+                xmin = bbox[1] - bbox[3] * 0.5
+                ymin = bbox[2] - bbox[4] * 0.5
+                xmax = bbox[1] + bbox[3] * 0.5
+                ymax = bbox[2] + bbox[4] * 0.5
 
                 xmin = scale_x + xmin * (1 - scale_x)
                 ymin = ymin * scale_y
@@ -54,12 +58,12 @@ def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filt
                 new_anno.append([bbox[0], xmin, ymin, xmax, ymax])
         elif i == 2:  # bottom-left
             img = cv2.resize(img, (divid_point_x, output_size[0] - divid_point_y))
-            output_img[divid_point_y:output_size[0], :divid_point_x, :] = img
+            output_img[divid_point_y : output_size[0], :divid_point_x, :] = img
             for bbox in img_annos:
-                xmin = bbox[1] - bbox[3]*0.5
-                ymin = bbox[2] - bbox[4]*0.5
-                xmax = bbox[1] + bbox[3]*0.5
-                ymax = bbox[2] + bbox[4]*0.5
+                xmin = bbox[1] - bbox[3] * 0.5
+                ymin = bbox[2] - bbox[4] * 0.5
+                xmax = bbox[1] + bbox[3] * 0.5
+                ymax = bbox[2] + bbox[4] * 0.5
 
                 xmin = xmin * scale_x
                 ymin = scale_y + ymin * (1 - scale_y)
@@ -67,13 +71,17 @@ def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filt
                 ymax = scale_y + ymax * (1 - scale_y)
                 new_anno.append([bbox[0], xmin, ymin, xmax, ymax])
         else:  # bottom-right
-            img = cv2.resize(img, (output_size[1] - divid_point_x, output_size[0] - divid_point_y))
-            output_img[divid_point_y:output_size[0], divid_point_x:output_size[1], :] = img
+            img = cv2.resize(
+                img, (output_size[1] - divid_point_x, output_size[0] - divid_point_y)
+            )
+            output_img[
+                divid_point_y : output_size[0], divid_point_x : output_size[1], :
+            ] = img
             for bbox in img_annos:
-                xmin = bbox[1] - bbox[3]*0.5
-                ymin = bbox[2] - bbox[4]*0.5
-                xmax = bbox[1] + bbox[3]*0.5
-                ymax = bbox[2] + bbox[4]*0.5
+                xmin = bbox[1] - bbox[3] * 0.5
+                ymin = bbox[2] - bbox[4] * 0.5
+                xmax = bbox[1] + bbox[3] * 0.5
+                ymax = bbox[2] + bbox[4] * 0.5
 
                 xmin = scale_x + xmin * (1 - scale_x)
                 ymin = scale_y + ymin * (1 - scale_y)
@@ -82,7 +90,10 @@ def mosaic(all_img_list, annotation_folder, idxs, output_size, scale_range, filt
                 new_anno.append([bbox[0], xmin, ymin, xmax, ymax])
 
     if 0 < filter_scale:
-        new_anno = [anno for anno in new_anno if
-                    filter_scale < (anno[3] - anno[1]) and filter_scale < (anno[4] - anno[2])]
+        new_anno = [
+            anno
+            for anno in new_anno
+            if filter_scale < (anno[3] - anno[1]) and filter_scale < (anno[4] - anno[2])
+        ]
 
     return output_img, new_anno

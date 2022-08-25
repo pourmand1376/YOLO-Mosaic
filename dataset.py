@@ -1,7 +1,7 @@
-import random
 import cv2
 import os
 import glob
+
 
 def file_len(fname):
     with open(fname) as f:
@@ -10,30 +10,29 @@ def file_len(fname):
     return i + 1
 
 
-
 def dataset(anno_dir, img_dir):
     img_paths = []
     annos = []
-    for anno_file in glob.glob(os.path.join(anno_dir, '*.txt')):
-        anno_id = anno_file.split('/')[-1].split('.')[0]
+    for anno_file in glob.glob(os.path.join(anno_dir, "*.txt")):
+        anno_id = anno_file.split("/")[-1].split(".")[0]
 
-        with open(anno_file, 'r') as f:
+        with open(anno_file, "r") as f:
             num_of_objs = int(file_len(f.name))
 
-            img_path = os.path.join(img_dir, f'{anno_id}.png')
+            img_path = os.path.join(img_dir, f"{anno_id}.png")
             img = cv2.imread(img_path)
             img_height, img_width, _ = img.shape
             del img
 
             boxes = []
             for _ in range(num_of_objs):
-                obj = f.readline().rstrip().split(' ')
+                obj = f.readline().rstrip().split(" ")
                 obj = [float(elm) for elm in obj]
                 obj[0] = int(obj[0])
-                
+
                 xmin = max(obj[1], 0)
                 ymin = max(obj[2], 0)
-                xmax = min(obj[3], img_width) 
+                xmax = min(obj[3], img_width)
                 ymax = min(obj[4], img_height)
 
                 boxes.append([obj[0], xmin, ymin, xmax, ymax])
