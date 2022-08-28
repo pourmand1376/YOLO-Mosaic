@@ -12,7 +12,7 @@ import yaml
 
 from logger import logger
 
-app = Typer(name="Mosaic", add_help_option=False)
+app = Typer(name="Mosaic")
 
 OUTPUT_SIZE = (1200, 1200)  # Height, Width
 SCALE_RANGE = (0.5, 0.5)
@@ -51,17 +51,18 @@ def chunker(seq, size):
 
 
 @app.command()
-def main(database_yaml: str, output_folder :str, process_count = 1):
+def convert_database(database_yaml: str, output_folder :str,):
     """
     This one receives a yaml file and iterates over all folders in that folder
 
     Args:
         database_yaml (str): path to database yaml file. Yaml file should contain the path to images dir
-        output_folde (str): the folder in which you want your data to be stored
+        output_folder (str): the folder in which you want your data to be stored
     """
     
     database_yaml = Path(database_yaml)
     output_folder = Path(output_folder)
+    output_folder.mkdir(exist_ok=True, parents=True)
 
     database=yaml.safe_load(database_yaml.read_text())
     for item in ['train', 'val', 'test']:
@@ -160,10 +161,10 @@ def convert_images(
 
 
 if __name__ == "__main__":
-    # app()
+    app()
     # for debugging!
     # convert_images('/media/amir/external_1TB/Dataset/Anevrism/output_folder2/images',
     # '/media/amir/external_1TB/Dataset/Anevrism/output_folder2/labels',
     # '/media/amir/external_1TB/Dataset/Anevrism/output_mosaic')
-    main('/media/amir/external_1TB/Dataset/Anevrism/output_folder2/database.yaml', 
-    '/media/amir/external_1TB/Dataset/Anevrism/output_mosaic', 10)
+    #main('/media/amir/external_1TB/Dataset/Anevrism/output_folder2/database.yaml', 
+    #'/media/amir/external_1TB/Dataset/Anevrism/output_mosaic', 10)
