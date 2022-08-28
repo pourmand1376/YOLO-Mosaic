@@ -34,6 +34,7 @@ temp_convert: remove_log ## convert dataset to new format
 		--output-height 1000 --output-width 1000
 
 convert: remove_log ## convert dataset to new format
+	$(CONDA_ACTIVATE) mosaic
 	python main.py convert-database \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_folder/database.yaml' \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic/'
