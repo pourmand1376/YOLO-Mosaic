@@ -32,4 +32,4 @@ convert: remove_log ## convert dataset to new format
 		'/media/amir/external_1TB/Dataset/Anevrism/output_folder2/images' \
 		'/media/amir/external_1TB/Dataset/Anevrism/output_folder2/labels' \
 		'/media/amir/external_1TB/Dataset/Anevrism/output_mosaic' \
-		--output-height 2000 --output-width 2000
+		--output-height 1000 --output-width 1000

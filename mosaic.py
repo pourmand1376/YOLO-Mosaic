@@ -15,7 +15,7 @@ def mosaic(
 
     new_anno = []
     for i, idx in enumerate(idxs):
-        path = all_img_list[idx]
+        path = idx
         file_name = annotation_folder / Path(
             path.split("/")[-1].replace(".png", ".txt")
         )
