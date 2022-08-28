@@ -19,7 +19,7 @@ install: ## Install required dependencies for this project
 	pip install -r requirements.txt
 
 remove_log: ## Removes log file
-	rm debug.log
+	rm -f debug.log
 
 help_main: ## Show main.py python help file
 	$(CONDA_ACTIVATE) mosaic
